@@ -5,14 +5,16 @@
              name="MyService"
              targetNamespace="http://localhost:8000/wsdl">
 
-  <!-- Definição das mensagens -->
-  <message name="getUsersRequest"/>
+  <!-- Definição de mensagens -->
+  <message name="getUsersRequest">
+    <part name="authentication" type="tns:AuthHeader"/>
+  </message>
 
   <message name="getUsersResponse">
     <part name="users" type="tns:UserList"/>
   </message>
 
-  <!-- Definição do tipo complexo para a lista de usuários -->
+  <!-- Tipos: Definindo o tipo AuthHeader para a autenticação -->
   <types>
     <xsd:schema targetNamespace="http://localhost:8000/wsdl">
       <xsd:complexType name="User">
@@ -27,6 +29,14 @@
       <xsd:complexType name="UserList">
         <xsd:sequence>
           <xsd:element name="user" type="tns:User" maxOccurs="unbounded"/>
+        </xsd:sequence>
+      </xsd:complexType>
+
+      <!-- Definição do tipo para o cabeçalho de autenticação -->
+      <xsd:complexType name="AuthHeader">
+        <xsd:sequence>
+          <xsd:element name="username" type="xsd:string"/>
+          <xsd:element name="password" type="xsd:string"/>
         </xsd:sequence>
       </xsd:complexType>
     </xsd:schema>
