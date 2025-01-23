@@ -1,16 +1,43 @@
 const soap = require('soap');
 const http = require('http');
 const fs = require('fs');
+const User = require('./models/User'); // Importando o modelo User para acessar os dados do banco
+
+// Função para listar clientes
+async function listarClientes() {
+  try {
+    const clientes = await User.findAll();
+    return clientes.map(cliente => ({
+      CODIGO: cliente.CODIGO,
+      COD_FUNCIONARIO: cliente.COD_FUNCIONARIO,
+      NOME: cliente.NOME,
+      SENHA: cliente.SENHA, // Embora sensível, estamos retornando a senha (ajuste conforme necessidade)
+    }));
+  } catch (error) {
+    throw new Error('Erro ao buscar clientes: ' + error.message);
+  }
+}
 
 var myService = {
   MyService: {
     MyPort: {
+      ListarClientes: async function(args) {
+        try {
+          const clientes = await listarClientes();
+          return {
+            clientes: clientes, 
+          };
+        } catch (error) {
+          return {
+            status: 'Erro ao listar clientes: ' + error.message,
+          };
+        }
+      },
       MyFunction: function(args) {
         return {
           status: 'Received: ' + args.testParam
         };
       },
-      
       MyAsyncFunction: function(args, callback) {
         setTimeout(() => {
           callback({

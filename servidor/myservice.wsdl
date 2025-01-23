@@ -1,0 +1,64 @@
+<definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:tns="http://localhost:8000/wsdl"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             name="MyService"
+             targetNamespace="http://localhost:8000/wsdl">
+
+  <!-- Mensagens para a operação ListarClientes -->
+  <message name="ListarClientesRequest"></message> <!-- Requisição sem parâmetros -->
+
+  <message name="ListarClientesResponse">
+    <part name="clientes" type="tns:ClienteList"/> <!-- Tipo complexo para a lista de clientes -->
+  </message>
+
+  <!-- Definição do tipo complexo para a lista de clientes -->
+  <types>
+    <xsd:schema targetNamespace="http://localhost:8000/wsdl">
+      <xsd:complexType name="Cliente">
+        <xsd:sequence>
+          <xsd:element name="CODIGO" type="xsd:int"/>
+          <xsd:element name="COD_FUNCIONARIO" type="xsd:int"/>
+          <xsd:element name="NOME" type="xsd:string"/>
+          <xsd:element name="SENHA" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+
+      <xsd:complexType name="ClienteList">
+        <xsd:sequence>
+          <xsd:element name="cliente" type="tns:Cliente" maxOccurs="unbounded"/>
+        </xsd:sequence>
+      </xsd:complexType>
+    </xsd:schema>
+  </types>
+
+  <!-- PortType e operação -->
+  <portType name="MyPort">
+    <operation name="ListarClientes">
+      <input message="tns:ListarClientesRequest"/>
+      <output message="tns:ListarClientesResponse"/>
+    </operation>
+  </portType>
+
+  <!-- Binding -->
+  <binding name="MyPortBinding" type="tns:MyPort">
+    <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="ListarClientes">
+      <soap:operation soapAction="http://localhost:8000/wsdl/ListarClientes"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+  </binding>
+
+  <!-- Serviço -->
+  <service name="MyService">
+    <port name="MyPort" binding="tns:MyPortBinding">
+      <soap:address location="http://localhost:8000/soap"/>
+    </port>
+  </service>
+
+</definitions>
