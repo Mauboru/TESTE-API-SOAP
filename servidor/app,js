@@ -8,7 +8,6 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 8000;
 
-// Rota para listar clientes
 app.get('/users', async (req, res) => {
   try {
     const clientes = await Cliente.findAll();

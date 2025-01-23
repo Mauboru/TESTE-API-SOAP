@@ -1,55 +1,32 @@
 const soap = require('soap');
 const http = require('http');
 const fs = require('fs');
-const User = require('./models/User'); // Importando o modelo User para acessar os dados do banco
-
-// Função para listar clientes
-async function listarClientes() {
-  try {
-    const clientes = await User.findAll();
-    return clientes.map(cliente => ({
-      CODIGO: cliente.CODIGO,
-      COD_FUNCIONARIO: cliente.COD_FUNCIONARIO,
-      NOME: cliente.NOME,
-      SENHA: cliente.SENHA, // Embora sensível, estamos retornando a senha (ajuste conforme necessidade)
-    }));
-  } catch (error) {
-    throw new Error('Erro ao buscar clientes: ' + error.message);
-  }
-}
+const Cliente = require('./models/User'); 
 
 var myService = {
   MyService: {
     MyPort: {
-      ListarClientes: async function(args) {
+      getUsers: async function(args, callback) {
         try {
-          const clientes = await listarClientes();
-          return {
-            clientes: clientes, 
-          };
+          const usuarios = await Cliente.findAll(); 
+          const userList = usuarios.map(user => ({
+            CODIGO: user.CODIGO,
+            COD_FUNCIONARIO: user.COD_FUNCIONARIO,
+            NOME: user.NOME,
+            SENHA: user.SENHA
+          }));
+
+          callback({ users: { user: userList } }); 
         } catch (error) {
-          return {
-            status: 'Erro ao listar clientes: ' + error.message,
-          };
+          console.error('Erro ao listar usuários:', error);
+          callback({ users: [] }); 
         }
-      },
-      MyFunction: function(args) {
-        return {
-          status: 'Received: ' + args.testParam
-        };
-      },
-      MyAsyncFunction: function(args, callback) {
-        setTimeout(() => {
-          callback({
-            status: 'Received asynchronously: ' + args.testParam
-          });
-        }, 1000); 
       }
     }
   }
 };
 
-var xml = fs.readFileSync('myservice.wsdl', 'utf8');
+var xml = fs.readFileSync('myservice.wsdl', 'utf8'); 
 
 var server = http.createServer(function(request, response) {
   if (request.url === '/') {

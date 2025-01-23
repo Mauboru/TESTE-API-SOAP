@@ -5,17 +5,17 @@
              name="MyService"
              targetNamespace="http://localhost:8000/wsdl">
 
-  <!-- Mensagens para a operação ListarClientes -->
-  <message name="ListarClientesRequest"></message> <!-- Requisição sem parâmetros -->
+  <!-- Definição das mensagens -->
+  <message name="getUsersRequest"/>
 
-  <message name="ListarClientesResponse">
-    <part name="clientes" type="tns:ClienteList"/> <!-- Tipo complexo para a lista de clientes -->
+  <message name="getUsersResponse">
+    <part name="users" type="tns:UserList"/>
   </message>
 
-  <!-- Definição do tipo complexo para a lista de clientes -->
+  <!-- Definição do tipo complexo para a lista de usuários -->
   <types>
     <xsd:schema targetNamespace="http://localhost:8000/wsdl">
-      <xsd:complexType name="Cliente">
+      <xsd:complexType name="User">
         <xsd:sequence>
           <xsd:element name="CODIGO" type="xsd:int"/>
           <xsd:element name="COD_FUNCIONARIO" type="xsd:int"/>
@@ -24,9 +24,9 @@
         </xsd:sequence>
       </xsd:complexType>
 
-      <xsd:complexType name="ClienteList">
+      <xsd:complexType name="UserList">
         <xsd:sequence>
-          <xsd:element name="cliente" type="tns:Cliente" maxOccurs="unbounded"/>
+          <xsd:element name="user" type="tns:User" maxOccurs="unbounded"/>
         </xsd:sequence>
       </xsd:complexType>
     </xsd:schema>
@@ -34,24 +34,24 @@
 
   <!-- PortType e operação -->
   <portType name="MyPort">
-    <operation name="ListarClientes">
-      <input message="tns:ListarClientesRequest"/>
-      <output message="tns:ListarClientesResponse"/>
+    <operation name="getUsers">
+      <input message="tns:getUsersRequest"/>
+      <output message="tns:getUsersResponse"/>
     </operation>
   </portType>
 
   <!-- Binding -->
   <binding name="MyPortBinding" type="tns:MyPort">
     <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
-    <operation name="ListarClientes">
-      <soap:operation soapAction="http://localhost:8000/wsdl/ListarClientes"/>
-      <input>
-        <soap:body use="literal"/>
-      </input>
-      <output>
-        <soap:body use="literal"/>
-      </output>
-    </operation>
+      <operation name="getUsers">
+        <soap:operation soapAction="http://localhost:8000/wsdl/getUsers"/>
+        <input>
+          <soap:body use="literal"/>
+        </input>
+        <output>
+          <soap:body use="literal"/>
+        </output>
+      </operation>
   </binding>
 
   <!-- Serviço -->
